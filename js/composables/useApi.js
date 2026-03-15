@@ -28,9 +28,8 @@ export function useApi(toast, wsConnected, fetchAll) {
     await request(`/api/instances/${id}`, { method: 'DELETE' })
   }
 
-  async function createCluster(name, servers, agents, image) {
-    const body = { name, servers, agents }
-    if (image) body.image = image
+  async function createCluster(name) {
+    const body = { name }
     await request('/api/clusters', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

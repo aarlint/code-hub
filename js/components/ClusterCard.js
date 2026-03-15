@@ -31,7 +31,7 @@ export default defineComponent({
       }
       const remaining = props.idleTimeout - (Date.now() - cl.lastStart)
       idleWarn.value = remaining < 60 * 60 * 1000
-      idleText.value = 'Auto-stop in ' + formatCountdown(remaining)
+      idleText.value = 'Auto-pause in ' + formatCountdown(remaining)
     }
 
     onMounted(() => {
@@ -49,18 +49,9 @@ export default defineComponent({
     return () => {
       const cl = props.cluster
       const isRunning = cl.status === 'running'
-      const badgeClass = isRunning ? 'running' : cl.status === 'partial' ? 'partial' : 'stopped'
+      const isPaused = cl.status === 'paused'
+      const badgeClass = isRunning ? 'running' : isPaused ? 'paused' : cl.status === 'starting' ? 'starting' : 'stopped'
       const hasTerminal = cl.terminalState === 'running'
-
-      const versionDisplay = cl.k3sVersion
-        ? (cl.k3sVersion.split(':').pop().split('-')[0] || cl.k3sVersion)
-        : null
-
-      const metaItems = [
-        `<span class="cluster-meta__item"><i data-lucide="box" style="width:10px;height:10px"></i> ${cl.nodes} node${cl.nodes !== 1 ? 's' : ''}</span>`,
-        versionDisplay ? `<span class="cluster-meta__item"><i data-lucide="tag" style="width:10px;height:10px"></i> ${versionDisplay}</span>` : '',
-        `<span class="cluster-meta__item"><i data-lucide="network" style="width:10px;height:10px"></i> ${cl.network}</span>`,
-      ].filter(Boolean).join('')
 
       // Services section
       const serviceRows = []
@@ -100,7 +91,7 @@ export default defineComponent({
         cl.exposedApps.forEach(app => {
           serviceRows.push(h('div', { class: 'cluster-service-row', innerHTML:
             `<span class="cluster-service-row__label"><span class="cluster-service-row__dot cluster-service-row__dot--active"></span> Ingress</span>
-             <button class="btn btn--primary" data-action="open-panel" data-url="https://${app}.arlint.dev" data-title="${app}" style="padding:5px 12px;font-size:0.6rem">
+             <button class="btn btn--primary" data-action="open-panel" data-url="https://${app}.notdone.dev" data-title="${app}" style="padding:5px 12px;font-size:0.6rem">
                <i data-lucide="globe" style="width:12px;height:12px"></i> ${app}
              </button>`,
             onClick: (e) => {
@@ -113,7 +104,7 @@ export default defineComponent({
 
       const infoChildren = [
         h('div', { class: 'workspace-card__name' }, cl.name),
-        h('div', { class: 'cluster-meta', innerHTML: metaItems }),
+        h('div', { class: 'workspace-card__type', style: 'color:var(--accent-k8s)' }, 'vCluster'),
       ]
 
       // Idle countdown for running clusters
@@ -154,11 +145,11 @@ export default defineComponent({
           children.push(h('div', { class: 'cluster-services' }, serviceRows))
         }
         children.push(h('div', { class: 'workspace-card__actions' }, [
-          isRunning
+          (isRunning)
             ? h('button', { class: 'btn', onClick: () => emit('stop'),
-                innerHTML: '<i data-lucide="square" style="width:14px;height:14px"></i> Stop' })
+                innerHTML: '<i data-lucide="pause" style="width:14px;height:14px"></i> Pause' })
             : h('button', { class: 'btn btn--primary', onClick: () => emit('start'),
-                innerHTML: '<i data-lucide="play" style="width:14px;height:14px"></i> Start' }),
+                innerHTML: '<i data-lucide="play" style="width:14px;height:14px"></i> Resume' }),
           h('button', { class: 'btn btn--danger', onClick: () => emit('delete'),
             innerHTML: '<i data-lucide="trash-2" style="width:14px;height:14px"></i> Delete' }),
         ]))

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-hub
+  namespace: default
+  labels:
+    app: code-hub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-hub
+  template:
+    metadata:
+      labels:
+        app: code-hub
+    spec:
+      serviceAccountName: code-hub
+      containers:
+        - name: code-hub
+          image: ghcr.io/aarlint/code-hub:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: LISTEN
+              value: ":8080"
+            - name: STATIC_DIR
+              value: "/app"
+            - name: CLUSTER_IDLE_TIMEOUT
+              value: "8h"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-hub
+  namespace: default
+spec:
+  selector:
+    app: code-hub
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: code-hub
+  namespace: default
+spec:
+  rules:
+    - host: code.notdone.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: code-hub
+                port:
+                  number: 80

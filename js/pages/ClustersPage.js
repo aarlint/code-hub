@@ -120,7 +120,7 @@ export default defineComponent({
     async function createCluster(opts) {
       showCreateDialog.value = false
       try {
-        await api.createCluster(opts.name, opts.servers, opts.agents, opts.image)
+        await api.createCluster(opts.name)
         toast('Cluster created: ' + opts.name, 'success')
         await refreshIfNeeded()
       } catch (e) {
@@ -146,8 +146,8 @@ export default defineComponent({
         h('div', { class: 'page-header' }, [
           h('div', { class: 'page-header__top' }, [
             h('div', [
-              h('h1', { class: 'page-header__title' }, ['Clusters ', h('span', '// k3d kubernetes')]),
-              h('p', { class: 'page-header__sub' }, 'Manage k3d clusters and terminals'),
+              h('h1', { class: 'page-header__title' }, ['Clusters ', h('span', '// vCluster')]),
+              h('p', { class: 'page-header__sub' }, 'Manage virtual clusters and terminals'),
             ]),
             h('div', { class: 'page-header__actions' }, [
               h('button', {
@@ -169,7 +169,7 @@ export default defineComponent({
             ? h(EmptyState, {
                 icon: 'server',
                 title: 'No clusters found',
-                subtitle: 'Create a k3d cluster to get started',
+                subtitle: 'Create a virtual cluster to get started',
               }, {
                 actions: () => [
                   h('button', {

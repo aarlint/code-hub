@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: code-hub-auth
+  namespace: default
+spec:
+  forwardAuth:
+    address: http://code-hub.default.svc.cluster.local:80/api/auth
+    authResponseHeaders:
+      - Cf-Access-Authenticated-User-Email

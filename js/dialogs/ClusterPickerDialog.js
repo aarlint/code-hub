@@ -29,7 +29,7 @@ export default defineComponent({
           h('div', { class: 'confirm-dialog__title', style: 'text-align:center' }, `Create ${meta.label}`),
 
           h('div', { style: 'margin-bottom:20px' }, [
-            h('label', { class: 'form-label' }, 'Connect to k3d cluster'),
+            h('label', { class: 'form-label' }, 'Connect to virtual cluster'),
             h('div', { style: 'display:flex;flex-direction:column;gap:6px' }, [
               // "No cluster" option
               h('label', {
@@ -58,7 +58,7 @@ export default defineComponent({
                   h('span', { style: 'color:var(--text-primary)' }, c.name),
                   h('span', {
                     style: "color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:0.6rem;margin-left:auto",
-                  }, `${c.nodes} node${c.nodes !== 1 ? 's' : ''}`),
+                  }, c.status),
                 ])
               ),
             ]),

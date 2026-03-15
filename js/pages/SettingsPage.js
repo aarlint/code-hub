@@ -29,10 +29,11 @@ export default defineComponent({
         ['VS Code', 'linuxserver/code-server'],
         ['AI Code', 'Claude, Codex, Cursor'],
       ]),
-      card('Configuration', [
-        ['Domain', '*.arlint.dev'],
-        ['Network', 'traefik-proxy'],
-        ['Data Persistence', 'Docker named volumes'],
+      card('Infrastructure', [
+        ['Domain', '*.notdone.dev'],
+        ['Platform', 'Kubernetes (Pi k3s)'],
+        ['Clusters', 'vCluster virtual clusters'],
+        ['Data Persistence', 'PVCs (local-path)'],
         ['Auto-refresh', 'WebSocket (10s polling fallback)'],
       ]),
     ])

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DevZone">
 <meta name="theme-color" content="#08090c">
-<title>DevZone — arlint.dev</title>
+<title>DevZone — notdone.dev</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -474,6 +474,16 @@
   .workspace-card__badge--stopped {
     background: color-mix(in srgb, var(--accent-red) 12%, transparent);
     color: var(--accent-red);
+  }
+
+  .workspace-card__badge--paused {
+    background: color-mix(in srgb, var(--accent-yellow) 12%, transparent);
+    color: var(--accent-yellow);
+  }
+
+  .workspace-card__badge--starting {
+    background: color-mix(in srgb, var(--accent-yellow) 12%, transparent);
+    color: var(--accent-yellow);
   }
 
   .workspace-card__badge--created,
