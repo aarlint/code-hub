@@ -35,7 +35,7 @@ func CreateVCluster(ctx context.Context, client *kubernetes.Clientset, name, own
 			Name: ns,
 			Labels: map[string]string{
 				LabelVCluster: "true",
-				LabelOwner:    owner,
+				LabelOwner:    sanitizeLabelValue(owner),
 			},
 			Annotations: map[string]string{
 				LabelOwner: owner,
@@ -131,11 +131,11 @@ func ListVClusters(ctx context.Context, client *kubernetes.Clientset, owner stri
 
 	var result []types.ClusterInfo
 	for _, ns := range namespaces.Items {
-		nsOwner := ns.Labels[LabelOwner]
+		nsOwner := ns.Annotations[LabelOwner]
 		if nsOwner == "" {
-			nsOwner = ns.Annotations[LabelOwner]
+			nsOwner = ns.Labels[LabelOwner]
 		}
-		if nsOwner != owner {
+		if nsOwner != owner && nsOwner != sanitizeLabelValue(owner) {
 			continue
 		}
 

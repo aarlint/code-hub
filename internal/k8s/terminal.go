@@ -39,7 +39,7 @@ func CreateTerminal(ctx context.Context, client *kubernetes.Clientset, clusterNa
 	labels := map[string]string{
 		LabelTerminal:        "true",
 		LabelTerminalCluster: clusterName,
-		LabelOwner:           owner,
+		LabelOwner:           sanitizeLabelValue(owner),
 		"app":                terminalName,
 	}
 

@@ -61,9 +61,9 @@ func RunIngressBridge(ctx context.Context, hostClient *kubernetes.Clientset, onC
 			if err != nil {
 				continue
 			}
-			owner := namespace.Labels[LabelOwner]
+			owner := namespace.Annotations[LabelOwner]
 			if owner == "" {
-				owner = namespace.Annotations[LabelOwner]
+				owner = namespace.Labels[LabelOwner]
 			}
 
 			// List Ingresses inside vCluster
@@ -137,7 +137,7 @@ func syncHostIngresses(ctx context.Context, client *kubernetes.Clientset, cluste
 				Namespace: Namespace,
 				Labels: map[string]string{
 					bridgeLabel: clusterName,
-					LabelOwner:  owner,
+					LabelOwner:  sanitizeLabelValue(owner),
 				},
 				Annotations: mergeAnnotations(
 					map[string]string{

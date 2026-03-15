@@ -80,10 +80,25 @@ func sanitizeEmail(email string) string {
 	return emailRe.ReplaceAllString(strings.ToLower(prefix), "")
 }
 
+func sanitizeLabelValue(v string) string {
+	s := strings.Map(func(r rune) rune {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' || r == '.' {
+			return r
+		}
+		return '_'
+	}, v)
+	// Trim leading/trailing non-alphanumeric
+	s = strings.Trim(s, "-_.")
+	if len(s) > 63 {
+		s = s[:63]
+	}
+	return s
+}
+
 func managedLabels(owner, wsType string) map[string]string {
 	return map[string]string{
 		LabelManaged: "true",
-		LabelOwner:   owner,
+		LabelOwner:   sanitizeLabelValue(owner),
 		LabelType:    wsType,
 	}
 }
@@ -352,7 +367,7 @@ func ListWorkspaces(ctx context.Context, client *kubernetes.Clientset, owner str
 
 	var result []types.InstanceInfo
 	for _, d := range deploys.Items {
-		if d.Annotations[LabelOwner] != owner && d.Labels[LabelOwner] != owner {
+		if d.Annotations[LabelOwner] != owner && d.Labels[LabelOwner] != sanitizeLabelValue(owner) {
 			continue
 		}
 
