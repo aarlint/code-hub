@@ -1,0 +1,28 @@
+FROM node:20-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ curl bash git ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install Claude CLI
+RUN npm install -g @anthropic-ai/claude-code
+
+# Install OpenAI Codex CLI (native binary)
+RUN ARCH=$(uname -m) && \
+    curl -fsSL "https://github.com/openai/codex/releases/latest/download/codex-${ARCH}-unknown-linux-gnu.tar.gz" \
+      -o /tmp/codex.tar.gz && \
+    tar -xzf /tmp/codex.tar.gz -C /tmp && \
+    mv /tmp/codex-${ARCH}-unknown-linux-gnu /usr/local/bin/codex && \
+    chmod +x /usr/local/bin/codex && \
+    rm /tmp/codex.tar.gz
+
+# Install Cursor Agent CLI
+RUN curl https://cursor.com/install -fsS | bash
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+RUN npm install claude-code-web@latest
+
+EXPOSE 3000
+
+CMD ["npx", "cc-web", "--port", "3000", "--disable-auth", "--no-open"]

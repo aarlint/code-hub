@@ -1,0 +1,25 @@
+services:
+  code-hub:
+    build: .
+    container_name: code
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - kubeconfigs:/app/kubeconfigs
+      - kube-tools:/app/kube-tools
+      - /home/austin/traefik/dynamic:/app/traefik-dynamic
+    networks:
+      - traefik-proxy
+    labels:
+      - "traefik.docker.network=traefik-proxy"
+      - "traefik.http.services.code.loadbalancer.server.port=8080"
+
+volumes:
+  kubeconfigs:
+    name: kubeconfigs
+  kube-tools:
+    name: kube-tools
+
+networks:
+  traefik-proxy:
+    external: true
